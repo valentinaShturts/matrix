@@ -1,6 +1,47 @@
 #include <iostream>
 using namespace std;
 
+class A
+{
+	int value;
+public:
+	A() :value(0) {}
+	A(int a) : value(a) {}
+	int GetValue()const { return value; }
+	void SetValue(int a) { value = a; }
+
+	A operator+(const A& other) const
+	{
+		return A(value + other.value);
+	}
+	A operator-(const A& other) const
+	{
+		return A(value - other.value);
+	}
+	A operator*(const A& other) const
+	{
+		return A(value * other.value);
+	}
+	A operator/(const A& other) const
+	{
+		if (other.value != 0) return A(value / other.value);
+		else { return 0; }
+	}
+};
+ostream& operator<<(ostream& os, const A& a)
+{
+	os << a.GetValue();
+	return os;
+}
+
+istream& operator>>(istream& is, A& a)
+{
+	int value;
+	is >> value;
+	a.SetValue(value);
+	return is;
+}
+
 template<class T>
 class Matrix
 {
@@ -77,11 +118,59 @@ public:
 	}
 	~Matrix()
 	{
-		for (int j = 0; j < rows; j++)
+		Delete();
+	}
+
+	Matrix operator+(const Matrix& other) 
+	{
+		Matrix result(rows, cols);
+		for (int i = 0; i < rows; i++) 
 		{
-			delete[] arr[j];
+			for (int j = 0; j < cols; j++) 
+			{
+				result.arr[i][j] = arr[i][j] + other.arr[i][j];
+			}
 		}
-		delete[] arr;
+		return result;
+	}
+
+	Matrix operator-(const Matrix& other)
+	{
+		Matrix result(rows, cols);
+		for (int i = 0; i < rows; i++)
+		{
+			for (int j = 0; j < cols; j++)
+			{
+				result.arr[i][j] = arr[i][j] - other.arr[i][j];
+			}
+		}
+		return result;
+	}
+
+	Matrix operator*(const Matrix& other)
+	{
+		Matrix result(rows, cols);
+		for (int i = 0; i < rows; i++)
+		{
+			for (int j = 0; j < cols; j++)
+			{
+				result.arr[i][j] = arr[i][j] * other.arr[i][j];
+			}
+		}
+		return result;
+	}
+
+	Matrix operator/(const Matrix& other)
+	{
+		Matrix result(rows, cols);
+		for (int i = 0; i < rows; i++)
+		{
+			for (int j = 0; j < cols; j++)
+			{
+				result.arr[i][j] = arr[i][j] / other.arr[i][j];
+			}
+		}
+		return result;
 	}
 
 	void MaxMin()
@@ -101,22 +190,27 @@ public:
 };
 
 
+
 int main()
 {
-	Matrix<int> a(5,5);
+	Matrix<A> a(5,5);
 	a.Output();
 
 	cout << endl << endl;
 
-	Matrix<double> b(5, 5);
+	Matrix<A> b(5, 5);
 	b.Output();
 
 	cout << endl << endl;
 
-	Matrix<char> c;
+	Matrix<A> c = a + b;
+	c.Output();
+
+	cout << endl << endl;
+	/*Matrix<char> c;
 	c.Input();
 	c.Output();
 
-	c.MaxMin();
+	c.MaxMin();*/
 	return 0;
 }
